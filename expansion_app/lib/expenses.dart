@@ -1,4 +1,5 @@
 import 'package:expansion_app/Models/expense.dart';
+import 'package:expansion_app/Widget/chart/chart.dart';
 import 'package:expansion_app/Widget/expanses_list/expenses_list.dart';
 import 'package:expansion_app/Widget/new_expense.dart';
 import 'package:expansion_app/main.dart';
@@ -28,6 +29,7 @@ class ExpensesState extends State<Expenses> {
   void _openAddExpensedOverlay() {
     //
     showModalBottomSheet(
+        useSafeArea: true,
         isScrollControlled: true,
         context: context,
         builder: (ctx) => NewExapense(
@@ -60,6 +62,8 @@ class ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     Widget mainContent = const Center(
       child: Text("No response found. Start Adding some "),
     );
@@ -73,12 +77,19 @@ class ExpensesState extends State<Expenses> {
       appBar: AppBar(title: const Text("Flutter ExpenseTracker"), actions: [
         IconButton(onPressed: _openAddExpensedOverlay, icon: Icon(Icons.add))
       ]),
-      body: Column(children: [
-        Text('the chart'),
-        Expanded(
-          child: mainContent,
-        )
-      ]),
+      body: width < 600
+          ? Column(children: [
+              Chart(expenses: _registerdExpensed),
+              Expanded(
+                child: mainContent,
+              )
+            ])
+          : Row(children: [
+              Expanded(child: Chart(expenses: _registerdExpensed)),
+              Expanded(
+                child: mainContent,
+              )
+            ]),
     );
   }
 }
